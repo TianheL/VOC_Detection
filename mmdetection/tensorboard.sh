@@ -1,1 +1,1 @@
-tensorboard --logdir=/home/lth24/mmdetection/work_dirs/sparse-rcnn_r50_fpn_1x_coco/20250501_152459/vis_data
+tensorboard --logdir=work_dirs/sparse-rcnn_r50_fpn_1x_coco/20250501_152459/vis_data
