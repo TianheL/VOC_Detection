@@ -1,0 +1,1 @@
+python ./demo/image_demo.py ./demo/7.jpg configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_coco.py --weights work_dirs/sparse-rcnn_r50_fpn_1x_coco/epoch_9.pth --out-dir infer
