@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'CocoDataset'
-data_root = 'data/coco/'
+data_root = 'data/VOCdevkit/'
 
 # Example to use different file client
 # Method 1: simply set the data root and let the file I/O module
@@ -35,19 +35,48 @@ test_pipeline = [
                    'scale_factor'))
 ]
 train_dataloader = dict(
-    batch_size=2,
+    batch_size=8,
     num_workers=2,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
     batch_sampler=dict(type='AspectRatioBatchSampler'),
+    # dataset=dict(
+    #     type=dataset_type,
+    #     data_root=data_root,
+    #     ann_file='annotations/instances_train2017.json',  #change
+    #     data_prefix=dict(img='train2017/'),
+    #     filter_cfg=dict(filter_empty_gt=True, min_size=32),
+    #     pipeline=train_pipeline,
+    #     backend_args=backend_args))
     dataset=dict(
-        type=dataset_type,
-        data_root=data_root,
-        ann_file='annotations/instances_train2017.json',
-        data_prefix=dict(img='train2017/'),
-        filter_cfg=dict(filter_empty_gt=True, min_size=32),
-        pipeline=train_pipeline,
-        backend_args=backend_args))
+        type='RepeatDataset',
+        times=3,
+        dataset=dict(
+            type=dataset_type,
+            data_root=data_root,
+            ann_file='voc07train_12trainval.json',  #change
+            data_prefix=dict(img=''),
+            filter_cfg=dict(filter_empty_gt=True, min_size=32),
+            pipeline=train_pipeline,
+            backend_args=backend_args
+            )
+        )
+    )
+
+# val_dataloader = dict(
+#     batch_size=1,
+#     num_workers=2,
+#     persistent_workers=True,
+#     drop_last=False,
+#     sampler=dict(type='DefaultSampler', shuffle=False),
+#     dataset=dict(
+#         type=dataset_type,
+#         data_root=data_root,
+#         ann_file='annotations/instances_val2017.json',
+#         data_prefix=dict(img='val2017/'),
+#         test_mode=True,
+#         pipeline=test_pipeline,
+#         backend_args=backend_args))
 val_dataloader = dict(
     batch_size=1,
     num_workers=2,
@@ -57,20 +86,35 @@ val_dataloader = dict(
     dataset=dict(
         type=dataset_type,
         data_root=data_root,
-        ann_file='annotations/instances_val2017.json',
-        data_prefix=dict(img='val2017/'),
+        ann_file='voc07_val.json',
+        data_prefix=dict(img=''),
         test_mode=True,
         pipeline=test_pipeline,
         backend_args=backend_args))
-test_dataloader = val_dataloader
+test_dataloader = dict(
+    batch_size=1,
+    num_workers=2,
+    persistent_workers=True,
+    drop_last=False,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    dataset=dict(
+        type=dataset_type,
+        data_root=data_root,
+        ann_file='voc07_test.json',
+        data_prefix=dict(img=''),
+        test_mode=True,
+        pipeline=test_pipeline,
+        backend_args=backend_args))
 
-val_evaluator = dict(
-    type='CocoMetric',
-    ann_file=data_root + 'annotations/instances_val2017.json',
-    metric=['bbox', 'segm'],
-    format_only=False,
-    backend_args=backend_args)
-test_evaluator = val_evaluator
+# val_evaluator = dict(
+#     type='CocoMetric',
+#     ann_file=data_root + 'voc07_test.json',
+#     metric=['bbox', 'segm'],
+#     format_only=False,
+#     backend_args=backend_args)
+# test_evaluator = val_evaluator
+val_evaluator = dict(type='VOCMetric', metric='mAP', eval_mode='11points')
+test_evaluator = dict(type='VOCMetric', metric='mAP', eval_mode='11points')
 
 # inference on test dataset and
 # format the output results for submission.
