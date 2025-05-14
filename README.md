@@ -16,9 +16,17 @@ http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
 http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
 ```
+注：当前mmdetection框架并不支持VOC数据格式进行实例分割。因此在训练Mask-RCNN模型时，首先需要将上数据集转换为MS COCO的数据格式。这里，可以用mmdetection中自带的工具脚本（当然Github上也有很多其他类似工具）:
+```
+python ./tools/dataset_converters/pascal_voc.py
+```
 
 ## 2. 模型训练
-训练Sparse R-CNN模型，命令如下：
+训练实例分割Mask R-CNN模型，命令如下：
+```bash
+python ./tools/train.py ./configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py
+```
+训练目标检测Sparse R-CNN模型，命令如下：
 ```bash
 python ./tools/train.py ./configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_coco.py
 ```
@@ -29,6 +37,16 @@ tensorboard --logdir=./work_dirs/sparse-rcnn_r50_fpn_1x_coco/20250509_141113/vis
 ```
 
 ## 3. 模型测试
+测试Mask R-CNN模型，命令如下：
+```bash
+python tools/test.py configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py  work_dirs/mask-rcnn_r50_fpn_1x_coco/epoch_9.pth --out "./infer/out_9.pkl" --work-dir="./infer"
+```
+
+单张图片实例分割，命令如下：
+```bash
+python ./demo/inference_instanceseg.py --config configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py --checkpoints [your ckpt path] --image ./demo/demo.jpg --output [your output path]
+```
+
 测试Sparse R-CNN模型，命令如下：
 ```bash
 python tools/test.py configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_coco.py  work_dirs/sparse-rcnn_r50_fpn_1x_coco/epoch_9.pth --out "./infer/out_9.pkl" --work-dir="./infer"
@@ -36,5 +54,5 @@ python tools/test.py configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_coco.py  work_di
 
 单张图片检测，命令如下：
 ```bash
-python ./demo/image_demo.py ./demo/demo.jpg configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_coco.py --weights work_dirs/sparse-rcnn_r50_fpn_1x_coco/epoch_9.pth --out-dir infer
+python ./demo/image_demo.py ./demo/demo.jpg configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_coco.py --weights [your ckpt path] --out-dir infer
 ```
