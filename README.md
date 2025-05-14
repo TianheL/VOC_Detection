@@ -16,7 +16,7 @@ http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
 http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
 ```
-注：当前mmdetection框架并不支持VOC数据格式进行实例分割。因此在训练Mask-RCNN模型时，首先需要将上数据集转换为MS COCO的数据格式。这里，可以用mmdetection中自带的工具脚本（当然Github上也有很多其他类似工具）:
+注：当前mmdetection框架并不支持VOC数据格式进行实例分割。因此在训练Mask-RCNN模型时，首先需要将上数据集转换为MS COCO的数据格式（实例分割任务，我们采用Pascal VOC中Segmentation部分的数据）。这里，需要用到我们改写的转换脚本将mask的格式转为正确格式:
 ```
 python ./tools/dataset_converters/pascal_voc.py
 ```
